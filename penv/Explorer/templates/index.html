@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Destination Explorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 2rem;
+        }
+        label {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .popular-destinations {
+            margin-top: 2rem;
+        }
+        .popular-destinations h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .destination-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .destination-item {
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .destination-item:hover {
+            transform: translateY(-5px);
+        }
+        .destination-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .destination-name {
+            padding: 1rem;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Travel Destination Explorer</h1>
+        <form action="/explore" method="POST">
+            <label for="destination">Enter Destination:</label>
+            <input type="text" id="destination" name="destination" required placeholder="Type a destination...">
+            <button type="submit">Explore</button>
+        </form>
+        
+        <div class="popular-destinations">
+            <h2>Popular Destinations</h2>
+            <div class="destination-grid">
+                {% for destination in popular_destinations %}
+                    <div class="destination-item">
+                        <img src="{{ destination.image }}" alt="{{ destination.name }}" class="destination-image">
+                        <a href="{{ url_for('explore', destination=destination.name) }}" class="destination-name">
+                            {{ destination.name }}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+</body>
+<a href="Project_1\mpro\templates\index.html"
+</html>

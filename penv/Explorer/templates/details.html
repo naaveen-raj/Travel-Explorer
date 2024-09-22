@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploring {{ destination }}</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .section {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 5px;
+        }
+        .attraction-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            list-style-type: none;
+            padding: 0;
+        }
+        .attraction-item {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .attraction-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .attraction-description {
+            max-height: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+        .destination-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            padding: 10px 0;
+        }
+        .destination-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exploring {{ destination }}</h1>
+
+    <div class="section">
+        <h2>Destination Images</h2>
+        <div class="destination-images">
+            {% for image in destination_images %}
+                <img src="{{ image }}" alt="{{ destination }}" class="destination-image">
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Weather Information</h2>
+        {% if weather_data %}
+            <p>Temperature: {{ weather_data.main.temp }} °C</p>
+            <p>Humidity: {{ weather_data.main.humidity }}%</p>
+            <p>Weather: {{ weather_data.weather[0].description }}</p>
+        {% else %}
+            <p>No weather information available.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h2>About {{ destination }}</h2>
+        <p>{{ place_details }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Popular Attractions</h2>
+        {% if attractions %}
+            <ul class="attraction-list">
+                {% for attraction in attractions %}
+                    <li class="attraction-item">
+                        <h3>{{ attraction.name }}</h3>
+                        {% if attraction.image %}
+                            <img src="{{ attraction.image }}" alt="{{ attraction.name }}" class="attraction-image">
+                        {% endif %}
+                        <p class="attraction-description">{{ attraction.description }}</p>
+                        <p><strong>Type:</strong> {{ attraction.kinds }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No attraction information available.</p>
+        {% endif %}
+    </div>
+    
+    <div class="section">
+        <h2>Map of Attractions</h2>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = '{{ mapbox_api_key }}';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [{{ lng }}, {{ lat }}],
+            zoom: 6
+        });
+
+        // Add marker for the destination
+        new mapboxgl.Marker({ color: '#FF0000' })
+            .setLngLat([{{ lng }}, {{ lat }}])
+            .setPopup(new mapboxgl.Popup().setHTML("<h3>{{ destination }}</h3>"))
+            .addTo(map);
+
+        // Add markers for attractions
+        {% if attractions %}
+            {% for attraction in attractions %}
+                new mapboxgl.Marker({ color: '#0000FF' })
+                    .setLngLat([{{ attraction.lon }}, {{ attraction.lat }}])
+                    .setPopup(new mapboxgl.Popup().setHTML("<h3>{{ attraction.name }}</h3><p>{{ attraction.kinds }}</p>"))
+                    .addTo(map);
+            {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>
